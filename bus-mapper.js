@@ -87,6 +87,7 @@ const addGeoJSONDataToMap = (geoJsonData) => {
 
 const addTabularDataToPage = (geoJsonData) => {
   const elTabularDataTBody = document.getElementById('bus-tabdata-tbody');
+  elTabularDataTBody.replaceChildren();
 
   let counter = 0;
   geoJsonData['features'].forEach((feature) => {
