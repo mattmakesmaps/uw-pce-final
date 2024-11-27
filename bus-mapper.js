@@ -60,14 +60,23 @@ const apiResponseToGeoJSON = (apiResponse) => {
 }
 
 const addGeoJSONDataToMap = (geoJsonData) => {
-  map.addSource('trips', {
+  const idVal = 'trips';
+  // Need to destroy existing source and layer
+  // before re-creating.
+  if (map.getLayer(idVal)){
+    map.removeLayer(idVal);
+  }
+  if (map.getSource(idVal)){
+    map.removeSource(idVal);
+  }
+  map.addSource(idVal, {
     type: 'geojson',
     data: geoJsonData
   });
 
   map.addLayer({
-    'id': 'trips',
-    'source': 'trips',
+    'id': idVal,
+    'source': idVal,
     'type': 'circle',
     'paint': {
         'circle-radius': 10,
