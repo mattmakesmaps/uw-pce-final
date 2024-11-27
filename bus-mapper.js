@@ -1,6 +1,6 @@
 const elForm = document.getElementById('bus-route-form');
 const elRoute = document.getElementById('route');
-const elTabularDataContainer = document.getElementById('books-container');
+const elTabularDataContainer = document.getElementById('bus-tabdata-container');
 const API_KEY = '772e8f7d-77d8-4c54-8e20-4630a03a1126';
 
 const map = new maplibregl.Map({
@@ -59,10 +59,27 @@ const apiResponseToGeoJSON = (apiResponse) => {
   return geoJsonSubset;
 }
 
-const displayErrorMessage = () => {
+const addGeoJSONDataToMap = (geoJsonData) => {
+  map.addSource('trips', {
+    type: 'geojson',
+    data: geoJsonData
+  });
+
+  map.addLayer({
+    'id': 'trips',
+    'source': 'trips',
+    'type': 'circle',
+    'paint': {
+        'circle-radius': 10,
+        'circle-color': '#007cbf'
+    }
+  });
+};
+
+const displayErrorMessage = (error) => {
     elTabularDataContainer.replaceChildren();
     const elErrorText = document.createElement('p');
-    elErrorText.textContent = "Error with request. Try another date.";
+    elErrorText.textContent = error;
     elTabularDataContainer.appendChild(elErrorText);
 }
 
@@ -76,10 +93,11 @@ elForm.addEventListener('submit', async function(e) {
     const tripsForRouteAPIData = await fetchTripsForRoutesAPIData(requestUrlObject);
     const geoJsonData = apiResponseToGeoJSON(tripsForRouteAPIData)
     console.log(geoJsonData);
+    addGeoJSONDataToMap(geoJsonData);
     // updateBooksDisplay(bookAPIData, 5);
   } catch (error) {
     // Log error an report to user.
     console.log(error);
-    displayErrorMessage();
+    displayErrorMessage(error);
   }
 });
