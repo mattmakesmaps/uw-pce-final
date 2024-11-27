@@ -85,6 +85,11 @@ const addGeoJSONDataToMap = (geoJsonData) => {
   });
 };
 
+const epochToTimeStamp = (epoch) => {
+  let date = new Date(epoch);
+  return date.toLocaleString();
+}
+
 const addTabularDataToPage = (geoJsonData) => {
   const elTabularDataTBody = document.getElementById('bus-tabdata-tbody');
   elTabularDataTBody.replaceChildren();
@@ -98,11 +103,11 @@ const addTabularDataToPage = (geoJsonData) => {
     let tdVehicleId = document.createElement('td');
     tdVehicleId.textContent = feature['properties']['vehicleId'];
     let tdLocation = document.createElement('td');
-    tdLocation.textContent = feature['properties']['lastLocationUpdateTime'];
+    tdLocation.textContent = epochToTimeStamp(feature['properties']['lastLocationUpdateTime']);
     let tdPhase = document.createElement('td');
     tdPhase.textContent = feature['properties']['phase'];
     let tdDistance = document.createElement('td');
-    tdDistance.textContent = feature['properties']['distanceAlongTrip'];
+    tdDistance.textContent = feature['properties']['distanceAlongTrip'].toFixed(2);
     let tdDeviation = document.createElement('td');
     tdDeviation.textContent = feature['properties']['scheduleDeviation'];
 
