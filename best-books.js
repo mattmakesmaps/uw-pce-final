@@ -53,7 +53,7 @@ const updateBooksDisplay = (bookAPIData, numBooks) => {
 
 }
 
-formEl.addEventListener('submit', async function(e) {
+elForm.addEventListener('submit', async function(e) {
   e.preventDefault();
 
   const year = yearEl.value;
@@ -61,9 +61,9 @@ formEl.addEventListener('submit', async function(e) {
   const date = dateEl.value;
 
   // Fetch bestselling books for date and add top 5 to page
-  const requestUrlObject = generateBookAPIUrlObject(year, month, date);
+  const requestUrlObject = generatTripsForRouteUrlObject(year, month, date);
   try {
-    const bookAPIData = await fetchBookAPIData(requestUrlObject);
+    const bookAPIData = await fetchTripsForRoutesAPIData(requestUrlObject);
     updateBooksDisplay(bookAPIData, 5);
   } catch (error) {
     // Log error an report to user.
