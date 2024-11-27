@@ -3,6 +3,9 @@
 <head>
   <title>Bus Mapper</title>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <link rel='stylesheet' href='https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css' />
+  <link rel='stylesheet' href='bus-mapper.css' />
+  <script src='https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js'></script>
 </head>
 <body>
   <div class="container">
@@ -13,6 +16,14 @@
     </div>
     <div class="row">
       <div class="col-md-4">
+        <h3>Instructions</h3>
+        <p>This form uses specialized IDs for KC Metro Bus Routes.</p>
+        <p>Try some of the IDs below:</p>
+        <ul>
+            <li>Route 48: 100228</li>
+            <li>Route 8: 100275</li>
+            <li>Route 62: 100252</li>
+        </ul>
         <form id="bus-route-form">
           <div class="form-group mb-2">
             <label for="route">Route ID<label>
@@ -29,11 +40,11 @@
           </div>
         </form>
       </div>
-      <div class="col-md-7 offset-md-1" id="bus-container">
-        bus data here
-
-      </div>
-      </div>
+      <div class="col-md-7 offset-md-1" id="map"></div>
+    </div>
+    <div class="row">
+      <div class="col-12" id="bus-container">Tablular Data</div>
+    </div>
   </div>
 
   <script src="bus-mapper.js"></script>

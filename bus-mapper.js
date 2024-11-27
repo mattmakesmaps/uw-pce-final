@@ -3,9 +3,17 @@ const elRoute = document.getElementById('route');
 const elTabularDataContainer = document.getElementById('books-container');
 const API_KEY = '772e8f7d-77d8-4c54-8e20-4630a03a1126';
 
+const map = new maplibregl.Map({
+  container: 'map', // container id
+  style: 'https://demotiles.maplibre.org/style.json', // style URL
+  center: [0, 0], // starting position [lng, lat]
+  zoom: 1, // starting zoom
+  maplibreLogo: true
+});
+
 const generateTripsForRouteUrlObject = (routeVal) => {
   const baseUrl = 'https://api.pugetsound.onebusaway.org/api/where/trips-for-route/';
-  const requestUrl = new URL(`${routeVal}.json`, baseUrl);
+  const requestUrl = new URL(`1_${routeVal}.json`, baseUrl);
   requestUrl.searchParams.append('key', API_KEY);
   return requestUrl;
 };
