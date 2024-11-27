@@ -5,9 +5,9 @@ const API_KEY = '772e8f7d-77d8-4c54-8e20-4630a03a1126';
 
 const map = new maplibregl.Map({
   container: 'map', // container id
-  style: 'https://demotiles.maplibre.org/style.json', // style URL
-  center: [0, 0], // starting position [lng, lat]
-  zoom: 1, // starting zoom
+  style: 'https://api.maptiler.com/maps/streets/style.json?key=ubJidqUs4gFgsmGfWm2W',
+  center: [-122.3328, 47.6061], // starting position [lng, lat]
+  zoom: 10, // starting zoom
   maplibreLogo: true
 });
 
