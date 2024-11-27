@@ -86,19 +86,6 @@ const addGeoJSONDataToMap = (geoJsonData) => {
 };
 
 const addTabularDataToPage = (geoJsonData) => {
-              // <tr>
-              //   <th scope="row">2</th>
-              //   <td>Jacob</td>
-              //   <td>Thornton</td>
-              //   <td>@fat</td>
-              // </tr>
-
-                // <th scope="col">#</th>
-                // <th scope="col">Vehicle ID</th>
-                // <th scope="col">Last Location Update</th>
-                // <th scope="col">Phase</th>
-                // <th scope="col">Distance Along Trip</th>
-                // <th scope="col">Schedule Deviation</th>
   const elTabularDataTBody = document.getElementById('bus-tabdata-tbody');
 
   let counter = 0;
