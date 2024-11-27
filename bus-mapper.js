@@ -34,9 +34,9 @@ const fetchTripsForRoutesAPIData = async (urlObject) => {
 
 const displayErrorMessage = () => {
     elTabularDataContainer.replaceChildren();
-    const elBookErrorText = document.createElement('p');
-    elBookErrorText.textContent = "Error with request. Try another date.";
-    elTabularDataContainer.appendChild(elBookErrorText);
+    const elErrorText = document.createElement('p');
+    elErrorText.textContent = "Error with request. Try another date.";
+    elTabularDataContainer.appendChild(elErrorText);
 }
 
 elForm.addEventListener('submit', async function(e) {
