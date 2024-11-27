@@ -43,7 +43,22 @@
       <div class="col-md-7 offset-md-1" id="map"></div>
     </div>
     <div class="row">
-      <div class="col-12" id="bus-tabdata-container">Tablular Data</div>
+      <div class="col-12" id="bus-tabdata-container">
+        <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Vehicle ID</th>
+                <th scope="col">Last Location Update</th>
+                <th scope="col">Phase</th>
+                <th scope="col">Distance Along Trip</th>
+                <th scope="col">Schedule Deviation</th>
+              </tr>
+            </thead>
+            <tbody id="bus-tabdata-tbody">
+            </tbody>
+          </table>
+      </div>
     </div>
   </div>
 

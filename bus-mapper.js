@@ -85,6 +85,50 @@ const addGeoJSONDataToMap = (geoJsonData) => {
   });
 };
 
+const addTabularDataToPage = (geoJsonData) => {
+              // <tr>
+              //   <th scope="row">2</th>
+              //   <td>Jacob</td>
+              //   <td>Thornton</td>
+              //   <td>@fat</td>
+              // </tr>
+
+                // <th scope="col">#</th>
+                // <th scope="col">Vehicle ID</th>
+                // <th scope="col">Last Location Update</th>
+                // <th scope="col">Phase</th>
+                // <th scope="col">Distance Along Trip</th>
+                // <th scope="col">Schedule Deviation</th>
+  const elTabularDataTBody = document.getElementById('bus-tabdata-tbody');
+
+  let counter = 0;
+  geoJsonData['features'].forEach((feature) => {
+    counter++;
+    let elTr = document.createElement('tr');
+    let thIndex = document.createElement('th');
+    thIndex.textContent = counter;
+    let tdVehicleId = document.createElement('td');
+    tdVehicleId.textContent = feature['properties']['vehicleId'];
+    let tdLocation = document.createElement('td');
+    tdLocation.textContent = feature['properties']['lastLocationUpdateTime'];
+    let tdPhase = document.createElement('td');
+    tdPhase.textContent = feature['properties']['phase'];
+    let tdDistance = document.createElement('td');
+    tdDistance.textContent = feature['properties']['distanceAlongTrip'];
+    let tdDeviation = document.createElement('td');
+    tdDeviation.textContent = feature['properties']['scheduleDeviation'];
+
+    elTr.appendChild(thIndex);
+    elTr.appendChild(tdVehicleId);
+    elTr.appendChild(tdLocation);
+    elTr.appendChild(tdPhase);
+    elTr.appendChild(tdDistance);
+    elTr.appendChild(tdDeviation);
+
+    elTabularDataTBody.appendChild(elTr);
+  })
+}
+
 const displayErrorMessage = (error) => {
     elTabularDataContainer.replaceChildren();
     const elErrorText = document.createElement('p');
@@ -103,7 +147,7 @@ elForm.addEventListener('submit', async function(e) {
     const geoJsonData = apiResponseToGeoJSON(tripsForRouteAPIData)
     console.log(geoJsonData);
     addGeoJSONDataToMap(geoJsonData);
-    // updateBooksDisplay(bookAPIData, 5);
+    addTabularDataToPage(geoJsonData);
   } catch (error) {
     // Log error an report to user.
     console.log(error);
