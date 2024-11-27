@@ -32,6 +32,33 @@ const fetchTripsForRoutesAPIData = async (urlObject) => {
   }
 };
 
+// Reformat to GeoJSON spec: https://geojson.org/
+const apiResponseToGeoJSON = (apiResponse) => {
+  let geoJsonSubset = {
+    "type":"FeatureCollection",
+    "features": []
+  };
+  
+  apiResponse['data']['list'].forEach((trip) => {
+    console.log(trip);
+    let pointFeature = {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          trip['status']['position']['lon'],
+          trip['status']['position']['lat']
+        ]
+      },
+      "properties": trip['status']
+    };
+
+    geoJsonSubset['features'].push(pointFeature);
+  });
+
+  return geoJsonSubset;
+}
+
 const displayErrorMessage = () => {
     elTabularDataContainer.replaceChildren();
     const elErrorText = document.createElement('p');
@@ -47,7 +74,8 @@ elForm.addEventListener('submit', async function(e) {
 
   try {
     const tripsForRouteAPIData = await fetchTripsForRoutesAPIData(requestUrlObject);
-    console.log(tripsForRouteAPIData);
+    const geoJsonData = apiResponseToGeoJSON(tripsForRouteAPIData)
+    console.log(geoJsonData);
     // updateBooksDisplay(bookAPIData, 5);
   } catch (error) {
     // Log error an report to user.
