@@ -161,7 +161,10 @@ const updateCountdownTimer = (timeIntervalMS) => {
   intervalIDs['decrementBySeconds'] = setInterval(() => {
     if (remainingTimeSeconds > 0) {
       remainingTimeSeconds--;
-      console.log("Remaining Time:", remainingTimeSeconds);
+      const timeUIString = `Auto-Refresh Countdown (Seconds): ${remainingTimeSeconds}`;
+      console.log(timeUIString);
+      const elRefreshText = document.getElementById('refresh-text');
+      elRefreshText.textContent = timeUIString;
     }
   }, 1000);
 }
