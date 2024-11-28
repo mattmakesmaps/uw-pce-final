@@ -147,7 +147,6 @@ const updateCountdownTimer = (timeIntervalMS) => {
     if (remainingTimeSeconds > 0) {
       remainingTimeSeconds--;
       const timeUIString = `Auto-Refresh Status: ${remainingTimeSeconds} Seconds`;
-      console.log(timeUIString);
       elRefreshText.textContent = timeUIString;
     }
   }, 1000);
@@ -156,7 +155,6 @@ const updateCountdownTimer = (timeIntervalMS) => {
 const cleanupAllIntervalCalls = (intervalIDs) => {
   Object.values(intervalIDs).forEach((intervalId) => {
     if (intervalId !== null) {
-      console.log('clearing', intervalId);
       clearInterval(intervalId);
     }
   })
@@ -164,7 +162,6 @@ const cleanupAllIntervalCalls = (intervalIDs) => {
 
 const fetchAndProcessData = async (requestUrlObject) => {
   try {
-    console.log("Processing Refresh");
     elErrorText.replaceChildren();
     const tripsForRouteAPIData = await fetchAPIDataTripsForRoute(requestUrlObject);
     const geoJsonData = reformatAPIResponseToGeoJSON(tripsForRouteAPIData)
