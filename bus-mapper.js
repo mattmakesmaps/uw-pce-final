@@ -6,6 +6,8 @@ const elBtnCancelAutoRefresh = document.getElementById('cancel-refresh');
 
 const API_KEY = '772e8f7d-77d8-4c54-8e20-4630a03a1126';
 
+const mapIDVal = 'trips';
+
 let intervalIDs = {
   'processing': null,
   'decrementBySeconds': null
@@ -71,23 +73,22 @@ const apiResponseToGeoJSON = (apiResponse) => {
 }
 
 const addGeoJSONDataToMap = (geoJsonData) => {
-  const idVal = 'trips';
   // Need to destroy existing source and layer
   // before re-creating.
-  if (map.getLayer(idVal)){
-    map.removeLayer(idVal);
+  if (map.getLayer(mapIDVal)){
+    map.removeLayer(mapIDVal);
   }
-  if (map.getSource(idVal)){
-    map.removeSource(idVal);
+  if (map.getSource(mapIDVal)){
+    map.removeSource(mapIDVal);
   }
-  map.addSource(idVal, {
+  map.addSource(mapIDVal, {
     type: 'geojson',
     data: geoJsonData
   });
 
   map.addLayer({
-    'id': idVal,
-    'source': idVal,
+    'id': mapIDVal,
+    'source': mapIDVal,
     'type': 'circle',
     'paint': {
         'circle-radius': 10,
@@ -203,3 +204,23 @@ elForm.addEventListener('submit', async function(e) {
 elBtnCancelAutoRefresh.addEventListener('click', () => {
   cleanupAllIntervalCalls(intervalIDs);
 })
+
+// REF: https://maplibre.org/maplibre-gl-js/docs/examples/popup-on-click/
+// When a click event occurs on a feature in the places layer, open a popup at the
+// location of the feature, with description HTML from its properties.
+map.on('click', mapIDVal, (e) => {
+  const coordinates = e.features[0].geometry.coordinates.slice();
+  const description = e.features[0].properties.vehicleId;
+
+  // Ensure that if the map is zoomed out such that multiple
+  // copies of the feature are visible, the popup appears
+  // over the copy being pointed to.
+  while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+      coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+  }
+
+  new maplibregl.Popup()
+      .setLngLat(coordinates)
+      .setHTML(description)
+      .addTo(map);
+});
