@@ -2,6 +2,8 @@
 
 matt kenny final project for uw-pce course one.
 
+Website is viewable on github pages here: https://mattmakesmaps.com/uw-pce-final/
+
 Use the `trips-for-route` endpoint: https://api.pugetsound.onebusaway.org/api/where/trips-for-route/1_100224.json?key=TEST
 
 - Allow a user to input a route id via the user interface
