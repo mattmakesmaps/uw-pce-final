@@ -153,11 +153,13 @@ elForm.addEventListener('submit', async function(e) {
   const routeVal = elRoute.value;
   const requestUrlObject = generateTripsForRouteUrlObject(routeVal);
 
+  // Need to fire once outside of set interval to execute immediately.
+  fetchAndProcessData(requestUrlObject)
   // Need to wrap call to `fetchAndProcessData` in an anonymous function
-  // to negate `Uncaught SyntaxError: Unexected identifier 'Promise'`.
+  // to negate `Uncaught SyntaxError: Unexpected identifier 'Promise'`.
   processingIntervalId = setInterval(() => {
     fetchAndProcessData(requestUrlObject)
-  }, 5000);
+  }, 15000);
 });
 
 elBtnCancelAutoRefresh.addEventListener('click', () => {
