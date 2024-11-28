@@ -1,8 +1,9 @@
+const elBtnCancelAutoRefresh = document.getElementById('cancel-refresh');
 const elErrorText = document.getElementById('error-text');
 const elForm = document.getElementById('bus-route-form');
+const elRefreshText = document.getElementById('refresh-text');
 const elRoute = document.getElementById('route');
 const elTabularDataContainer = document.getElementById('bus-tabdata-container');
-const elBtnCancelAutoRefresh = document.getElementById('cancel-refresh');
 
 const API_KEY = '772e8f7d-77d8-4c54-8e20-4630a03a1126';
 
@@ -162,9 +163,8 @@ const updateCountdownTimer = (timeIntervalMS) => {
   intervalIDs['decrementBySeconds'] = setInterval(() => {
     if (remainingTimeSeconds > 0) {
       remainingTimeSeconds--;
-      const timeUIString = `Auto-Refresh Countdown (Seconds): ${remainingTimeSeconds}`;
+      const timeUIString = `Auto-Refresh Status: ${remainingTimeSeconds} Seconds`;
       console.log(timeUIString);
-      const elRefreshText = document.getElementById('refresh-text');
       elRefreshText.textContent = timeUIString;
     }
   }, 1000);
@@ -203,6 +203,7 @@ elForm.addEventListener('submit', async function(e) {
 
 elBtnCancelAutoRefresh.addEventListener('click', () => {
   cleanupAllIntervalCalls(intervalIDs);
+  elRefreshText.textContent = 'Auto-Refresh Status: Disabled'
 })
 
 // REF: https://maplibre.org/maplibre-gl-js/docs/examples/popup-on-click/

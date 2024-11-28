@@ -33,6 +33,9 @@
               class="form-control" 
               type="text" 
               placeholder="100000"
+              pattern="\d{6}"
+              title="Route ID must be a six-digit number."
+              required
               />
           </div>
           <div class="form-group mb-2">
@@ -40,7 +43,7 @@
             <input id="cancel-refresh" class="btn btn-primary" type="button" value="Cancel Auto-Refresh" />
           </div>
         </form>
-        <div class="col" id="refresh-text"></div>
+        <div class="col" id="refresh-text">Auto-Refresh Status:</div>
         <div class="col" id="error-text"></div>
       </div>
       <div class="col-md-7 offset-md-1" id="map"></div>
