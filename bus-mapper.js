@@ -3,7 +3,6 @@ const elErrorText = document.getElementById('error-text');
 const elForm = document.getElementById('bus-route-form');
 const elRefreshText = document.getElementById('refresh-text');
 const elRoute = document.getElementById('route');
-const elTabularDataContainer = document.getElementById('bus-tabdata-container');
 
 const API_KEY = '772e8f7d-77d8-4c54-8e20-4630a03a1126';
 
@@ -14,19 +13,7 @@ let intervalIDs = {
   'decrementBySeconds': null
 }
 
-let intervalIDProcessing = null;
-let intervalIDUpdateCountTimer = null;
-let intervalIDDecrementBySeconds = null;
-
-const map = new maplibregl.Map({
-  container: 'map', // container id
-  style: 'https://api.maptiler.com/maps/streets/style.json?key=ubJidqUs4gFgsmGfWm2W',
-  center: [-122.3328, 47.6061], // starting position [lng, lat]
-  zoom: 10, // starting zoom
-  maplibreLogo: true
-});
-
-const generateTripsForRouteUrlObject = (routeVal) => {
+const generateURLObjectTripsForRoute = (routeVal) => {
   const baseUrl = 'https://api.pugetsound.onebusaway.org/api/where/trips-for-route/';
   const requestUrl = new URL(`1_${routeVal}.json`, baseUrl);
   requestUrl.searchParams.append('key', API_KEY);
@@ -34,7 +21,7 @@ const generateTripsForRouteUrlObject = (routeVal) => {
 };
 
 // REF: https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch
-const fetchTripsForRoutesAPIData = async (urlObject) => {
+const fetchAPIDataTripsForRoute = async (urlObject) => {
   try {
     const response = await fetch(urlObject);
     if (!response.ok) {
@@ -48,7 +35,7 @@ const fetchTripsForRoutesAPIData = async (urlObject) => {
 };
 
 // Reformat to GeoJSON spec: https://geojson.org/
-const apiResponseToGeoJSON = (apiResponse) => {
+const reformatAPIResponseToGeoJSON = (apiResponse) => {
   let geoJsonSubset = {
     "type":"FeatureCollection",
     "features": []
@@ -73,49 +60,12 @@ const apiResponseToGeoJSON = (apiResponse) => {
   return geoJsonSubset;
 }
 
-const addGeoJSONDataToMap = (geoJsonData) => {
-  // Need to destroy existing source and layer
-  // before re-creating.
-  if (map.getLayer(mapIDVal)){
-    map.removeLayer(mapIDVal);
-  }
-  if (map.getSource(mapIDVal)){
-    map.removeSource(mapIDVal);
-  }
-  map.addSource(mapIDVal, {
-    type: 'geojson',
-    data: geoJsonData
-  });
-
-  map.addLayer({
-    'id': mapIDVal,
-    'source': mapIDVal,
-    'type': 'circle',
-    'paint': {
-        'circle-radius': 10,
-        'circle-color': '#007cbf'
-    }
-  });
-};
-
 const epochToTimeStamp = (epoch) => {
   let date = new Date(epoch);
   return date.toLocaleString();
 }
 
-const addTabularDataToPage = (geoJsonData) => {
-  const elTabularDataTBody = document.getElementById('bus-tabdata-tbody');
-  elTabularDataTBody.replaceChildren();
-
-  // Sort table by last updated date to add some dynamic behavior.
-  // REF: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort#description
-  geoJsonData['features'].sort((a,b) => {
-    return b['properties']['lastLocationUpdateTime'] - a['properties']['lastLocationUpdateTime'];
-  });
-
-  let counter = 0;
-  geoJsonData['features'].forEach((feature) => {
-    counter++;
+const makePopulatedTableRow = (counter, feature) => {
     let elTr = document.createElement('tr');
     let thIndex = document.createElement('th');
     thIndex.textContent = counter;
@@ -136,8 +86,23 @@ const addTabularDataToPage = (geoJsonData) => {
     elTr.appendChild(tdPhase);
     elTr.appendChild(tdDistance);
     elTr.appendChild(tdDeviation);
+    return elTr;
+}
 
-    elTabularDataTBody.appendChild(elTr);
+const addTabularDataToPage = (geoJsonData) => {
+  const elTabularDataTBody = document.getElementById('bus-tabdata-tbody');
+  elTabularDataTBody.replaceChildren();
+
+  // Sort table by last updated date to add some dynamic behavior.
+  // REF: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort#description
+  geoJsonData['features'].sort((a,b) => {
+    return b['properties']['lastLocationUpdateTime'] - a['properties']['lastLocationUpdateTime'];
+  });
+
+  let counter = 0;
+  geoJsonData['features'].forEach((feature) => {
+    counter++;
+    elTabularDataTBody.appendChild(makePopulatedTableRow(counter, feature));
   })
 }
 
@@ -152,8 +117,8 @@ const fetchAndProcessData = async (requestUrlObject) => {
   try {
     console.log("Processing Refresh");
     elErrorText.replaceChildren();
-    const tripsForRouteAPIData = await fetchTripsForRoutesAPIData(requestUrlObject);
-    const geoJsonData = apiResponseToGeoJSON(tripsForRouteAPIData)
+    const tripsForRouteAPIData = await fetchAPIDataTripsForRoute(requestUrlObject);
+    const geoJsonData = reformatAPIResponseToGeoJSON(tripsForRouteAPIData)
     addGeoJSONDataToMap(geoJsonData);
     addTabularDataToPage(geoJsonData);
   } catch (error) {
@@ -191,7 +156,7 @@ elForm.addEventListener('submit', async function(e) {
   cleanupAllIntervalCalls(intervalIDs);
 
   const routeVal = elRoute.value;
-  const requestUrlObject = generateTripsForRouteUrlObject(routeVal);
+  const requestUrlObject = generateURLObjectTripsForRoute(routeVal);
 
   // Need to fire once outside of set interval to execute immediately.
   const timeoutIntervalMS = 15000;
@@ -212,6 +177,45 @@ elBtnCancelAutoRefresh.addEventListener('click', () => {
   elRefreshText.textContent = 'Auto-Refresh Status: Disabled'
 })
 
+/**
+ * BEGIN MAP-SPECIFIC CODE
+ */
+
+const map = new maplibregl.Map({
+  container: 'map', // container id
+  style: 'https://api.maptiler.com/maps/streets/style.json?key=ubJidqUs4gFgsmGfWm2W',
+  center: [-122.3328, 47.6061], // starting position [lng, lat]
+  zoom: 10, // starting zoom
+  maplibreLogo: true
+});
+
+const addGeoJSONDataToMap = (geoJsonData) => {
+  // Need to destroy existing source and layer
+  // before re-creating.
+  if (map.getLayer(mapIDVal)){
+    map.removeLayer(mapIDVal);
+  }
+  if (map.getSource(mapIDVal)){
+    map.removeSource(mapIDVal);
+  }
+  map.addSource(mapIDVal, {
+    type: 'geojson',
+    data: geoJsonData
+  });
+
+  map.addLayer({
+    'id': mapIDVal,
+    'source': mapIDVal,
+    'type': 'circle',
+    'paint': {
+        'circle-radius': 10,
+        'circle-color': '#007cbf',
+        'circle-stroke-color': 'black',
+        'circle-stroke-width': 2
+    }
+  });
+};
+
 // REF: https://maplibre.org/maplibre-gl-js/docs/examples/popup-on-click/
 // When a click event occurs on a feature in the places layer, open a popup at the
 // location of the feature, with description HTML from its properties.
@@ -231,3 +235,7 @@ map.on('click', mapIDVal, (e) => {
       .setHTML(description)
       .addTo(map);
 });
+
+/**
+ * END MAP-SPECIFIC CODE
+ */
