@@ -5,7 +5,15 @@ const elTabularDataContainer = document.getElementById('bus-tabdata-container');
 const elBtnCancelAutoRefresh = document.getElementById('cancel-refresh');
 
 const API_KEY = '772e8f7d-77d8-4c54-8e20-4630a03a1126';
-let processingIntervalId = null;
+
+let intervalIDs = {
+  'processing': null,
+  'decrementBySeconds': null
+}
+
+let intervalIDProcessing = null;
+let intervalIDUpdateCountTimer = null;
+let intervalIDDecrementBySeconds = null;
 
 const map = new maplibregl.Map({
   container: 'map', // container id
@@ -147,24 +155,48 @@ const fetchAndProcessData = async (requestUrlObject) => {
   }
 }
 
+const updateCountdownTimer = (timeIntervalMS) => {
+  let remainingTimeSeconds = timeIntervalMS / 1000;
+
+  intervalIDs['decrementBySeconds'] = setInterval(() => {
+    if (remainingTimeSeconds > 0) {
+      remainingTimeSeconds--;
+      console.log("Remaining Time:", remainingTimeSeconds);
+    }
+  }, 1000);
+}
+
+const cleanupAllIntervalCalls = (intervalIDs) => {
+  Object.values(intervalIDs).forEach((intervalId) => {
+    if (intervalId !== null) {
+      console.log('clearing', intervalId);
+      clearInterval(intervalId);
+    }
+  })
+}
+
 elForm.addEventListener('submit', async function(e) {
   e.preventDefault();
+
+  cleanupAllIntervalCalls(intervalIDs);
 
   const routeVal = elRoute.value;
   const requestUrlObject = generateTripsForRouteUrlObject(routeVal);
 
   // Need to fire once outside of set interval to execute immediately.
+  const timeoutIntervalMS = 15000;
   fetchAndProcessData(requestUrlObject)
+  updateCountdownTimer(timeoutIntervalMS)
+
   // Need to wrap call to `fetchAndProcessData` in an anonymous function
   // to negate `Uncaught SyntaxError: Unexpected identifier 'Promise'`.
-  processingIntervalId = setInterval(() => {
+  intervalIDs['processing'] = setInterval(() => {
     fetchAndProcessData(requestUrlObject)
-  }, 15000);
+    updateCountdownTimer(timeoutIntervalMS)
+  }, timeoutIntervalMS);
+
 });
 
 elBtnCancelAutoRefresh.addEventListener('click', () => {
-  if (processingIntervalId) {
-    console.log("cancelling auto-refresh");
-    clearInterval(processingIntervalId);
-  }
+  cleanupAllIntervalCalls(intervalIDs);
 })
