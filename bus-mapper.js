@@ -107,6 +107,12 @@ const addTabularDataToPage = (geoJsonData) => {
   const elTabularDataTBody = document.getElementById('bus-tabdata-tbody');
   elTabularDataTBody.replaceChildren();
 
+  // Sort table by last updated date to add some dynamic behavior.
+  // REF: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort#description
+  geoJsonData['features'].sort((a,b) => {
+    return b['properties']['lastLocationUpdateTime'] - a['properties']['lastLocationUpdateTime'];
+  });
+
   let counter = 0;
   geoJsonData['features'].forEach((feature) => {
     counter++;
