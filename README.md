@@ -1,5 +1,6 @@
 # uw-pce-final
-matt kenny final project for uw-pce
+
+matt kenny final project for uw-pce course one.
 
 Use the `trips-for-route` endpoint: https://api.pugetsound.onebusaway.org/api/where/trips-for-route/1_100224.json?key=TEST
 
