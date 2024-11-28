@@ -15,9 +15,15 @@ Parse and display the following from endpoint:
 ## Criteria for Completion 4 of 6
 - One or more Classes (must use static methods and/or prototype methods)
 - **TODO:** Write testable code, use Jasmine unit tests
-- **TODO** One or more timing functions.
+- :white_check_mark: One or more timing functions.
   - Write a timing function to re-execute the query
     at a given interval (e.g 1 minute).
 - :white_check_mark: One or more fetch requests to a 3rd party API
 - Sets, updates, or changes local storage
 - :white_check_mark: Contains form fields, validates those fields
+
+## TODO
+
+- Wire up cancel auto-refresh button.
+- Wire up user facing refresh timer.
+- Tests.

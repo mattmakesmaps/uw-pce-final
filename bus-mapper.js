@@ -1,6 +1,8 @@
+const elErrorText = document.getElementById('error-text');
 const elForm = document.getElementById('bus-route-form');
 const elRoute = document.getElementById('route');
 const elTabularDataContainer = document.getElementById('bus-tabdata-container');
+
 const API_KEY = '772e8f7d-77d8-4c54-8e20-4630a03a1126';
 
 const map = new maplibregl.Map({
@@ -40,7 +42,6 @@ const apiResponseToGeoJSON = (apiResponse) => {
   };
   
   apiResponse['data']['list'].forEach((trip) => {
-    console.log(trip);
     let pointFeature = {
       "type": "Feature",
       "geometry": {
@@ -123,22 +124,18 @@ const addTabularDataToPage = (geoJsonData) => {
 }
 
 const displayErrorMessage = (error) => {
-    elTabularDataContainer.replaceChildren();
-    const elErrorText = document.createElement('p');
-    elErrorText.textContent = error;
-    elTabularDataContainer.appendChild(elErrorText);
+  elErrorText.replaceChildren();
+  const elErrorMessage = document.createElement('p');
+  elErrorMessage.textContent = error;
+  elErrorText.appendChild(elErrorMessage);
 }
 
-elForm.addEventListener('submit', async function(e) {
-  e.preventDefault();
-
-  const routeVal = elRoute.value;
-  const requestUrlObject = generateTripsForRouteUrlObject(routeVal);
-
+const fetchAndProcessData = async (requestUrlObject) => {
   try {
+    console.log("Processing");
+    elErrorText.replaceChildren();
     const tripsForRouteAPIData = await fetchTripsForRoutesAPIData(requestUrlObject);
     const geoJsonData = apiResponseToGeoJSON(tripsForRouteAPIData)
-    console.log(geoJsonData);
     addGeoJSONDataToMap(geoJsonData);
     addTabularDataToPage(geoJsonData);
   } catch (error) {
@@ -146,4 +143,16 @@ elForm.addEventListener('submit', async function(e) {
     console.log(error);
     displayErrorMessage(error);
   }
+}
+elForm.addEventListener('submit', async function(e) {
+  e.preventDefault();
+
+  const routeVal = elRoute.value;
+  const requestUrlObject = generateTripsForRouteUrlObject(routeVal);
+
+  // Need to wrap call to `fetchAndProcessData` in an anonymous function
+  // to negate `Uncaught SyntaxError: Unexected identifier 'Promise'`.
+  const intervalID = setInterval(() => {
+    fetchAndProcessData(requestUrlObject)
+  }, 5000);
 });
