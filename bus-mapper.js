@@ -15,7 +15,7 @@ const mapIDVal = 'trips';
 let intervalIDs = {
   'processing': null,
   'decrementBySeconds': null
-}
+};
 
 /**
  * END GLOBALS
@@ -70,7 +70,7 @@ const reformatAPIResponseToGeoJSON = (apiResponse) => {
   });
 
   return geoJsonSubset;
-}
+};
 
 /**
  * END API FETCH AND JSON DATA MANIPULATION CODE
@@ -83,7 +83,7 @@ const reformatAPIResponseToGeoJSON = (apiResponse) => {
 const epochToTimeStamp = (epoch) => {
   let date = new Date(epoch);
   return date.toLocaleString();
-}
+};
 
 const makePopulatedTableRow = (counter, feature) => {
     let elTr = document.createElement('tr');
@@ -107,7 +107,7 @@ const makePopulatedTableRow = (counter, feature) => {
     elTr.appendChild(tdDistance);
     elTr.appendChild(tdDeviation);
     return elTr;
-}
+};
 
 const addTabularDataToPage = (geoJsonData) => {
   const elTabularDataTBody = document.getElementById('bus-tabdata-tbody');
@@ -124,14 +124,14 @@ const addTabularDataToPage = (geoJsonData) => {
     counter++;
     elTabularDataTBody.appendChild(makePopulatedTableRow(counter, feature));
   })
-}
+};
 
 const displayErrorMessage = (error) => {
   elErrorText.replaceChildren();
   const elErrorMessage = document.createElement('p');
   elErrorMessage.textContent = error;
   elErrorText.appendChild(elErrorMessage);
-}
+};
 
 /**
  * END UI RELATED DISPLAY CODE
@@ -175,7 +175,7 @@ const fetchAndProcessData = async (requestUrlObject) => {
     console.log(error);
     displayErrorMessage(error);
   }
-}
+};
 
 elForm.addEventListener('submit', async function(e) {
   e.preventDefault();
@@ -202,7 +202,7 @@ elForm.addEventListener('submit', async function(e) {
 elBtnCancelAutoRefresh.addEventListener('click', () => {
   cleanupAllIntervalCalls(intervalIDs);
   elRefreshText.textContent = 'Auto-Refresh Status: Disabled'
-})
+});
 
 /**
  * END NON-MAP EVENT LISTENERS AND HELPERS
