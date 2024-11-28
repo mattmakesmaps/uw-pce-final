@@ -1,3 +1,7 @@
+/**
+ * BEGIN GLOBALS
+ */
+
 const elBtnCancelAutoRefresh = document.getElementById('cancel-refresh');
 const elErrorText = document.getElementById('error-text');
 const elForm = document.getElementById('bus-route-form');
@@ -12,6 +16,14 @@ let intervalIDs = {
   'processing': null,
   'decrementBySeconds': null
 }
+
+/**
+ * END GLOBALS
+ */
+
+/**
+ * BEGIN API FETCH AND JSON DATA MANIPULATION CODE
+ */
 
 const generateURLObjectTripsForRoute = (routeVal) => {
   const baseUrl = 'https://api.pugetsound.onebusaway.org/api/where/trips-for-route/';
@@ -59,6 +71,14 @@ const reformatAPIResponseToGeoJSON = (apiResponse) => {
 
   return geoJsonSubset;
 }
+
+/**
+ * END API FETCH AND JSON DATA MANIPULATION CODE
+ */
+
+/**
+ * BEGIN UI RELATED DISPLAY CODE
+ */
 
 const epochToTimeStamp = (epoch) => {
   let date = new Date(epoch);
@@ -113,6 +133,35 @@ const displayErrorMessage = (error) => {
   elErrorText.appendChild(elErrorMessage);
 }
 
+/**
+ * END UI RELATED DISPLAY CODE
+ */
+
+/**
+ * BEGIN NON-MAP EVENT LISTENERS AND HELPERS
+ */
+const updateCountdownTimer = (timeIntervalMS) => {
+  let remainingTimeSeconds = timeIntervalMS / 1000;
+
+  intervalIDs['decrementBySeconds'] = setInterval(() => {
+    if (remainingTimeSeconds > 0) {
+      remainingTimeSeconds--;
+      const timeUIString = `Auto-Refresh Status: ${remainingTimeSeconds} Seconds`;
+      console.log(timeUIString);
+      elRefreshText.textContent = timeUIString;
+    }
+  }, 1000);
+};
+
+const cleanupAllIntervalCalls = (intervalIDs) => {
+  Object.values(intervalIDs).forEach((intervalId) => {
+    if (intervalId !== null) {
+      console.log('clearing', intervalId);
+      clearInterval(intervalId);
+    }
+  })
+};
+
 const fetchAndProcessData = async (requestUrlObject) => {
   try {
     console.log("Processing Refresh");
@@ -126,28 +175,6 @@ const fetchAndProcessData = async (requestUrlObject) => {
     console.log(error);
     displayErrorMessage(error);
   }
-}
-
-const updateCountdownTimer = (timeIntervalMS) => {
-  let remainingTimeSeconds = timeIntervalMS / 1000;
-
-  intervalIDs['decrementBySeconds'] = setInterval(() => {
-    if (remainingTimeSeconds > 0) {
-      remainingTimeSeconds--;
-      const timeUIString = `Auto-Refresh Status: ${remainingTimeSeconds} Seconds`;
-      console.log(timeUIString);
-      elRefreshText.textContent = timeUIString;
-    }
-  }, 1000);
-}
-
-const cleanupAllIntervalCalls = (intervalIDs) => {
-  Object.values(intervalIDs).forEach((intervalId) => {
-    if (intervalId !== null) {
-      console.log('clearing', intervalId);
-      clearInterval(intervalId);
-    }
-  })
 }
 
 elForm.addEventListener('submit', async function(e) {
@@ -178,7 +205,11 @@ elBtnCancelAutoRefresh.addEventListener('click', () => {
 })
 
 /**
- * BEGIN MAP-SPECIFIC CODE
+ * END NON-MAP EVENT LISTENERS AND HELPERS
+ */
+
+/**
+ * BEGIN MAP-SPECIFIC SETUP AND EVENT LISTENER
  */
 
 const map = new maplibregl.Map({
@@ -237,5 +268,5 @@ map.on('click', mapIDVal, (e) => {
 });
 
 /**
- * END MAP-SPECIFIC CODE
+ * END MAP-SPECIFIC SETUP AND EVENT LISTENER
  */
