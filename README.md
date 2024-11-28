@@ -24,6 +24,7 @@ Parse and display the following from endpoint:
 
 ## TODO
 
-- Wire up cancel auto-refresh button.
 - Wire up user facing refresh timer.
+- setInterval seems to go through it's wait period before firing the first time.
+  Need to fire first, then wait.
 - Tests.

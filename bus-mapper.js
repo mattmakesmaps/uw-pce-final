@@ -2,8 +2,10 @@ const elErrorText = document.getElementById('error-text');
 const elForm = document.getElementById('bus-route-form');
 const elRoute = document.getElementById('route');
 const elTabularDataContainer = document.getElementById('bus-tabdata-container');
+const elBtnCancelAutoRefresh = document.getElementById('cancel-refresh');
 
 const API_KEY = '772e8f7d-77d8-4c54-8e20-4630a03a1126';
+let processingIntervalId = null;
 
 const map = new maplibregl.Map({
   container: 'map', // container id
@@ -132,7 +134,7 @@ const displayErrorMessage = (error) => {
 
 const fetchAndProcessData = async (requestUrlObject) => {
   try {
-    console.log("Processing");
+    console.log("Processing Refresh");
     elErrorText.replaceChildren();
     const tripsForRouteAPIData = await fetchTripsForRoutesAPIData(requestUrlObject);
     const geoJsonData = apiResponseToGeoJSON(tripsForRouteAPIData)
@@ -144,6 +146,7 @@ const fetchAndProcessData = async (requestUrlObject) => {
     displayErrorMessage(error);
   }
 }
+
 elForm.addEventListener('submit', async function(e) {
   e.preventDefault();
 
@@ -152,7 +155,14 @@ elForm.addEventListener('submit', async function(e) {
 
   // Need to wrap call to `fetchAndProcessData` in an anonymous function
   // to negate `Uncaught SyntaxError: Unexected identifier 'Promise'`.
-  const intervalID = setInterval(() => {
+  processingIntervalId = setInterval(() => {
     fetchAndProcessData(requestUrlObject)
   }, 5000);
 });
+
+elBtnCancelAutoRefresh.addEventListener('click', () => {
+  if (processingIntervalId) {
+    console.log("cancelling auto-refresh");
+    clearInterval(processingIntervalId);
+  }
+})
