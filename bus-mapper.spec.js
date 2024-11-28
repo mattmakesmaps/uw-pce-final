@@ -43,3 +43,29 @@ describe("API Fetch and Manipulation Code Sanity Tests", function() {
         expect(result).toEqual(expectedGeoJSON);
     })
 });
+
+describe("UI Related Display Code Sanity Tests", function() {
+    it("makePopulatedTableRow should return a well formed html snippet", function () {
+        const counter = 1;
+        const mockFeature = {
+            properties: {
+                vehicleId: 5678,
+                lastLocationUpdateTime: 1732772750000,
+                phase: "IN_PROGRESS",
+                distanceAlongTrip: 3000.923824987,
+                scheduleDeviation: -5
+            }
+        };
+
+        const result = makePopulatedTableRow(counter, mockFeature);
+        const expectedEpochToString = '11/27/2024, 9:45:50 PM';
+
+        expect(result.tagName).toBe('TR');
+        expect(result.children.length).toBe(6);
+        expect(result.children[0].tagName).toBe('TH');
+        expect(result.children[1].tagName).toBe('TD');
+        expect(result.children[2].textContent).toBe(expectedEpochToString);
+    });
+
+
+});
