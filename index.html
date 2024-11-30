@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>KC Metro Bus Mapper</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <link rel='stylesheet' href='https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css' />
+  <link rel='stylesheet' href='bus-mapper.css' />
+  <script src='https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js'></script>
+</head>
+<body>
+  <div class="container">
+    <div class="row my-4">
+      <div class="col-12">
+        <h1>King County Metro Real-Time Bus Locations (By Route)</h1>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-4">
+        <h3>Instructions</h3>
+        <p>This form uses specialized IDs for KC Metro Bus Routes.</p>
+        <p>For a full list of routes see the following <a target="_blank" href="https://openmobilitydata-data.s3-us-west-1.amazonaws.com/public/feeds/king-county-metro/73/20231206/original/routes.txt">Open Mobility Data file on S3</a>.</p>
+        <p>Or just try some of these IDs below:</p>
+        <ul>
+            <li>Route 128 (West Seattle): 100026</li>
+            <li>Route 48 (U-District): 100228</li>
+            <li>Route 8 (CD - Cap Hill): 100275</li>
+            <li>Route 62 (Fremont): 100252</li>
+        </ul>
+        <form id="bus-route-form">
+          <div class="form-group mb-2">
+            <label for="route">Route ID<label>
+            <input 
+              id="route"
+              name="route" 
+              class="form-control" 
+              type="text" 
+              placeholder="100000"
+              pattern="\d{6}"
+              title="Route ID must be a six-digit number."
+              required
+              />
+          </div>
+          <div class="form-group mb-2">
+            <input id="submit" class="btn btn-primary" type="submit" value="Fetch Route Data" />
+            <input id="cancel-refresh" class="btn btn-primary" type="button" value="Cancel Auto-Refresh" />
+          </div>
+        </form>
+        <div class="col" id="refresh-text">Auto-Refresh Status:</div>
+        <div class="col" id="error-text"></div>
+      </div>
+      <div class="col-md-7 offset-md-1" id="map"></div>
+    </div>
+    <div class="row">
+      <div class="col-12" id="bus-tabdata-container">
+        <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Vehicle ID</th>
+                <th scope="col">Last Location Update</th>
+                <th scope="col">Phase</th>
+                <th scope="col">Distance Along Trip</th>
+                <th scope="col">Schedule Deviation</th>
+              </tr>
+            </thead>
+            <tbody id="bus-tabdata-tbody">
+            </tbody>
+          </table>
+      </div>
+    </div>
+  </div>
+
+  <script src="bus-mapper.js"></script>
+</body>
+</html>
